@@ -11,7 +11,7 @@ import httpx
 
 @pytest.mark.asyncio
 async def test_search(ds):
-    async with httpx.AsyncClient(app=ds.app()) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=ds.app())) as client:
         response = await client.get("http://localhost/-/beta")
         assert 200 == response.status_code
         assert '<input type="search" name="q" value="" id="q">' in response.text
@@ -140,7 +140,7 @@ all_results = [
     ),
 )
 async def test_advanced_search(ds, q, expected):
-    async with httpx.AsyncClient(app=ds.app()) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=ds.app())) as client:
         response = await client.get(
             "http://localhost/-/beta?" + urllib.parse.urlencode({"q": q})
         )
@@ -172,7 +172,7 @@ async def test_advanced_search(ds, q, expected):
     ),
 )
 async def test_search_order(ds, sort, expected):
-    async with httpx.AsyncClient(app=ds.app()) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=ds.app())) as client:
         q = "email"
         response = await client.get(
             "http://localhost/-/beta?" + urllib.parse.urlencode({"q": q, "sort": sort})
@@ -212,7 +212,7 @@ ALL_EXPECTED = [
     ),
 )
 async def test_search_order_for_timeline(ds, sort, expected):
-    async with httpx.AsyncClient(app=ds.app()) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=ds.app())) as client:
         url = "http://localhost/-/beta"
         if sort:
             url += "?sort=" + sort
@@ -233,7 +233,7 @@ async def test_search_order_for_timeline(ds, sort, expected):
 
 @pytest.mark.asyncio
 async def test_fixture(ds):
-    async with httpx.AsyncClient(app=ds.app()) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=ds.app())) as client:
         response = await client.get("http://localhost/-/databases.json")
         assert 200 == response.status_code
         assert {d["name"] for d in response.json()} == {"beta", "emails", "github"}
@@ -242,7 +242,7 @@ async def test_fixture(ds):
 @pytest.mark.asyncio
 async def test_plugin_is_installed():
     app = Datasette([], memory=True).app()
-    async with httpx.AsyncClient(app=app) as client:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app)) as client:
         response = await client.get("http://localhost/-/plugins.json")
         assert 200 == response.status_code
         installed_plugins = {p["name"] for p in response.json()}
