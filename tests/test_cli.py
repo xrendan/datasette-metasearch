@@ -1,5 +1,5 @@
 from click.testing import CliRunner
-from dogsheep_beta.cli import cli
+from datasette_metasearch.cli import cli
 import sqlite_utils
 import datetime
 import textwrap

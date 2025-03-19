@@ -1,5 +1,5 @@
 from datasette import hookimpl
-from dogsheep_beta.utils import parse_metadata
+from datasette_metasearch.utils import parse_metadata
 import html
 import urllib
 from jinja2 import Template
@@ -56,11 +56,11 @@ async def beta(request, datasette):
     from datasette.utils.asgi import Response
     from datasette.utils import path_with_removed_args, path_with_replaced_args
 
-    config = datasette.plugin_config("dogsheep-beta") or {}
+    config = datasette.plugin_config("datasette-metasearch") or {}
     database_name = config.get("database") or datasette.get_database().name
-    dogsheep_beta_config_file = config["config_file"]
+    datasette_metasearch_config_file = config["config_file"]
     template_debug = bool(config.get("template_debug"))
-    rules = parse_metadata(open(dogsheep_beta_config_file).read())
+    rules = parse_metadata(open(datasette_metasearch_config_file).read())
     q = (request.args.get("q") or "").strip()
     sorted_by = "relevance" if q else "newest"
     if request.args.get("sort") in SORT_ORDERS:

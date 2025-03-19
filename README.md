@@ -1,6 +1,6 @@
-# dogsheep-beta
+# datasette-metasearch
 
-[![PyPI](https://img.shields.io/pypi/v/dogsheep-beta.svg)](https://pypi.org/project/dogsheep-beta/)
+[![PyPI](https://img.shields.io/pypi/v/datasette-metasearch.svg)](https://pypi.org/project/datasette-metasearch/)
 [![Changelog](https://img.shields.io/github/v/release/dogsheep/beta?include_prereleases&label=changelog)](https://github.com/dogsheep/beta/releases)
 [![Tests](https://github.com/dogsheep/beta/workflows/Test/badge.svg)](https://github.com/dogsheep/beta/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/dogsheep/beta/blob/main/LICENSE)
@@ -17,13 +17,13 @@ Read more about how this example works in [Building a search engine for datasett
 
 Install this tool like so:
 
-    $ pip install dogsheep-beta
+    $ pip install datasette-metasearch
 
 ## Usage
 
-Run the indexer using the `dogsheep-beta` command-line tool:
+Run the indexer using the `datasette-metasearch` command-line tool:
 
-    $ dogsheep-beta index dogsheep.db config.yml
+    $ datasette-metasearch index dogsheep.db config.yml
 
 The `config.yml` file contains details of the databases and document types that should be indexed:
 
@@ -53,7 +53,7 @@ By default the search index that this tool creates will be configured for Porter
 
 If you don't want to use Porter stemming, use the `--tokenize none` option:
 
-    $ dogsheep-beta index dogsheep.db config.yml --tokenize none
+    $ datasette-metasearch index dogsheep.db config.yml --tokenize none
 
 You can pass other SQLite tokenize argumenst here, see [the SQLite FTS tokenizers documentation](https://www.sqlite.org/fts5.html#tokenizers).
 
@@ -88,7 +88,7 @@ Indexed items can be assigned a category. Categories are integers that correspon
 
 ## Datasette plugin
 
-Run `datasette install dogsheep-beta` (or use `pip install dogsheep-beta` in the same environment as Datasette) to install the Dogsheep Beta Datasette plugin.
+Run `datasette install datasette-metasearch` (or use `pip install datasette-metasearch` in the same environment as Datasette) to install the Dogsheep Beta Datasette plugin.
 
 Once installed, a custom search interface will be made available at `/-/beta`. You can use this interface to execute searches.
 
@@ -97,9 +97,9 @@ The Datasette plugin has some configuration options. You can set these by adding
 ```json
 {
     "plugins": {
-        "dogsheep-beta": {
+        "datasette-metasearch": {
             "database": "beta",
-            "config_file": "dogsheep-beta.yml",
+            "config_file": "datasette-metasearch.yml",
             "template_debug": true
         }
     }
@@ -182,7 +182,7 @@ JavaScript on the page will look for any elements with `data-map-latitude` and `
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
 
-    cd dogsheep-beta
+    cd datasette-metasearch
     python3 -mvenv venv
     source venv/bin/activate
 

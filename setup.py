@@ -13,7 +13,7 @@ def get_long_description():
 
 
 setup(
-    name="dogsheep-beta",
+    name="datasette-metasearch",
     description="Build a search index across content from multiple SQLite database tables and run faceted searches against it using Datasette",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
@@ -26,15 +26,15 @@ setup(
     },
     license="Apache License, Version 2.0",
     version=VERSION,
-    packages=["dogsheep_beta"],
-    package_data={"dogsheep_beta": ["templates/*.html"]},
+    packages=["datasette_metasearch"],
+    package_data={"datasette_metasearch": ["templates/*.html"]},
     entry_points={
-        "datasette": ["beta = dogsheep_beta"],
-        "console_scripts": ["dogsheep-beta = dogsheep_beta.cli:cli"],
+        "datasette": ["beta = datasette_metasearch"],
+        "console_scripts": ["datasette-metasearch = datasette_metasearch.cli:cli"],
     },
     install_requires=["datasette>=0.50.2", "click", "PyYAML", "sqlite-utils>=3.0"],
     extras_require={
         "test": ["pytest", "pytest-asyncio", "httpx", "beautifulsoup4", "html5lib"]
     },
-    tests_require=["dogsheep-beta[test]"],
+    tests_require=["datasette-metasearch[test]"],
 )

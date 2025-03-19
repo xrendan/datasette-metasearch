@@ -1,7 +1,7 @@
 from datasette.app import Datasette
 from bs4 import BeautifulSoup as Soup
-from dogsheep_beta.cli import index
-from dogsheep_beta.utils import parse_metadata
+from datasette_metasearch.cli import index
+from datasette_metasearch.utils import parse_metadata
 import textwrap
 import sqlite_utils
 import pytest
@@ -21,7 +21,7 @@ async def test_search(ds):
             "<p>Got 3 results",
             "<p>Email from blah@example.com, subject Hey there",
             "<p>Email from blah@example.com, subject What&#39;s going on",
-            "<p>Commit to dogsheep/dogsheep-beta on 2020-08-01T00:05:02",
+            "<p>Commit to xrendan/datasette-metasearch on 2020-08-01T00:05:02",
             '<p>User searched for: "things"</p>',
         ):
             assert fragment in response.text
@@ -246,7 +246,7 @@ async def test_plugin_is_installed():
         response = await client.get("http://localhost/-/plugins.json")
         assert 200 == response.status_code
         installed_plugins = {p["name"] for p in response.json()}
-        assert "dogsheep-beta" in installed_plugins
+        assert "datasette-metasearch" in installed_plugins
 
 
 @pytest.fixture
@@ -256,7 +256,7 @@ def ds(tmp_path_factory, monkeypatch):
     github_path = db_directory / "github.db"
     emails_path = db_directory / "emails.db"
     beta_path = db_directory / "beta.db"
-    beta_config_path = db_directory / "dogsheep-beta.yml"
+    beta_config_path = db_directory / "datasette-metasearch.yml"
 
     beta_config_path.write_text(
         textwrap.dedent(
@@ -308,9 +308,9 @@ def ds(tmp_path_factory, monkeypatch):
     METADATA = textwrap.dedent(
         """
     plugins:
-        dogsheep-beta:
+        datasette-metasearch:
             database: beta
-            config_file: dogsheep-beta.yml
+            config_file: datasette-metasearch.yml
     """
     )
 
@@ -320,13 +320,13 @@ def ds(tmp_path_factory, monkeypatch):
             {
                 "sha": "a5b39c5049b28997528bb0eca52730ab6febabeaba54cfcba0ab5d70e7207523",
                 "message": "Another commit to things",
-                "repo_name": "dogsheep/dogsheep-beta",
+                "repo_name": "xrendan/datasette-metasearch",
                 "committer_date": "2020-08-01T00:05:02",
             },
             {
                 "sha": "5becbf70d64951e2910314ef5227d19b11c25b0c9586934941366da8997e57cb",
                 "message": "Added some tests",
-                "repo_name": "dogsheep/dogsheep-beta",
+                "repo_name": "xrendan/datasette-metasearch",
                 "committer_date": "2020-08-02T12:35:48",
             },
         ],
