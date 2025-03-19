@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -30,14 +30,21 @@ jobs:
       run: |
         pytest -v
   deploy:
+    name: upload release to PyPI
     runs-on: ubuntu-latest
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
     needs: [test]
     steps:
-    - uses: actions/checkout@v2
+      # retrieve your distributions here
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.12'
     - uses: actions/cache@v2
       name: Configure pip caching
       with:
@@ -48,11 +55,10 @@ jobs:
     - name: Install dependencies
       run: |
         pip install setuptools wheel twine
-    - name: Publish
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+    - name: Build Package
       run: |
         python setup.py sdist bdist_wheel
-        twine upload dist/*
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+
 
