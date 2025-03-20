@@ -11,3 +11,7 @@ venv
 .vscode
 *.db
 config.yml
+
+build/
+dist/
+.idea/
