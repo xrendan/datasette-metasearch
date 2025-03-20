@@ -1,2 +1,42 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datasette-metasearch"
+version = "1.0.1"
+description = "Build a search index across content from multiple SQLite database tables and run faceted searches against it using Datasette"
+readme = "README.md"
+requires-python = ">=3.7"
+authors = [{ name = "Brendan Samek" }]
+license = { text = "Apache-2.0" }
+dependencies = [
+    "datasette>=0.50.2",
+    "click",
+    "PyYAML",
+    "sqlite-utils>=3.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/xrendan/datasette-metasearch"
+Issues = "https://github.com/dogsheep/datasette-metasearch/issues"
+CI = "https://github.com/dogsheep/datasette-metasearch/actions"
+Changelog = "https://github.com/dogsheep/datasette-metasearch/releases"
+
+[tool.setuptools]
+packages = ["datasette_metasearch"]
+
+[tool.setuptools.package-data]
+datasette_metasearch = ["templates/*.html"]
+
+[project.entry-points.datasette]
+beta = "datasette_metasearch"
+
+[project.scripts]
+datasette-metasearch = "datasette_metasearch.cli:cli"
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-asyncio", "httpx", "beautifulsoup4", "html5lib"]
+
 [tool.pytest.ini_options]
-asyncio_defaurlt_fixture_loop_scope = "function"
+asyncio_defaurlt_fixture_loop_scope = "session"
