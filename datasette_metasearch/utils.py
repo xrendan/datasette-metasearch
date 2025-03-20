@@ -2,6 +2,7 @@ import json
 import sqlite_utils
 import yaml
 
+# TODO: Make this dynamic based on config.yml
 COLUMNS = {
     "type": str,
     "key": str,
@@ -13,13 +14,16 @@ COLUMNS = {
     "search_2": str,
     "search_3": str,
 }
+# TODO: Make this dynamic based on config.yml
 INDEXES = [("timestamp",), ("category",), ("is_public",)]
+# TODO: Don't force categorization like this but support other kinds of FKs like geography
 FOREIGN_KEYS = [("category", "categories", "id")]
 DEFAULTS = {"is_public": 0}
 NOT_NULL = {
     "is_public",
 }
 
+# TODO: Don't force create catgeories
 CATEGORIES = [
     {"id": 1, "name": "created"},
     {"id": 2, "name": "saved"},
@@ -57,6 +61,8 @@ def run_indexer(db_path, rules, tokenize="porter", databases=None):
     # Run optimize
     db = sqlite_utils.Database(db_path)
     with db.conn:
+        # This is a hack, something is going on that is corrupting the FTS index so that it needs to be rebuilt.
+        db["search_index"].rebuild_fts()
         db["search_index"].optimize()
     db.vacuum()
 
