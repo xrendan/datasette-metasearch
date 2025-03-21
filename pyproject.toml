@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datasette-metasearch"
-version = "1.0.1"
+version = "canada-spends-1.1.1"
 description = "Build a search index across content from multiple SQLite database tables and run faceted searches against it using Datasette"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -14,7 +14,8 @@ dependencies = [
     "datasette>=0.50.2",
     "click",
     "PyYAML",
-    "sqlite-utils>=3.0"
+    "sqlite-utils>=3.0",
+    "ruff>=0.11.2",
 ]
 
 [project.urls]

@@ -1,7 +1,6 @@
 from click.testing import CliRunner
 from datasette_metasearch.cli import cli
 import sqlite_utils
-import datetime
 import textwrap
 import pytest
 

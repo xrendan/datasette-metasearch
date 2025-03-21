@@ -5,7 +5,18 @@
 [![Tests](https://github.com/dogsheep/beta/workflows/Test/badge.svg)](https://github.com/dogsheep/beta/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/dogsheep/beta/blob/main/LICENSE)
 
-Build a search index across content from multiple SQLite database tables and run faceted searches against it using Datasette
+Build a search index across content from multiple SQLite database tables and run faceted searches against it using Datasette.
+
+
+## Motivation
+
+Different datasets may contain overlapping data but may not conform to the same schema. Some datasets may contain more
+information than others that we want to display when searching across datasets. We might also want to see statistics or facets 
+across those datasettes (like how many records in a particular year or made by a particular person). `datasette-metasearch` enables this 
+pattern with a config file, rather than trying to build a pipeline to transform each dataset into a common format then building a 
+bespoke query interface for those, we can specify the fields we want to index and search, how to transform them into the com o
+
+The motivation for this was to join government spending datasets so they can be easily queried.
 
 ## Example
 
@@ -26,6 +37,8 @@ Run the indexer using the `datasette-metasearch` command-line tool:
     $ datasette-metasearch index dogsheep.db config.yml
 
 The `config.yml` file contains details of the databases and document types that should be indexed:
+
+NOTE: the database storing the search index must be different from the ones containing the data to be indexed
 
 ```yaml
 twitter.db:
@@ -69,22 +82,6 @@ The columns that can be returned by our query are:
 - `is_public` - an integer (0 or 1, defaults to 0 if not set) specifying if this is public or not
 
 Public records are things like your public tweets, blog posts and GitHub commits.
-
-## Categories
-
-Indexed items can be assigned a category. Categories are integers that correspond to records in the `categories` table, which defaults to containing the following:
-
-|   id | name       |
-|------|------------|
-|    1 | created    |
-|    2 | saved      |
-|    3 | received   |
-
-`created` is for items that have been created by the Dogsheep instance owner.
-
-`saved` is for items that they have saved, liked or favourited.
-
-`received` is for items that have been specifically sent to them by other people - incoming emails or direct messages for example.
 
 ## Datasette plugin
 

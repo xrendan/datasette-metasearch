@@ -1,19 +1,18 @@
 from datasette import hookimpl
-from datasette_metasearch.utils import parse_metadata
+from datasette_metasearch.utils import parse_metadata, COLUMNS
 import html
 import urllib
 from jinja2 import Template
 import json
 
+
+COLUMNS_SQL = "\n".join([f"search_index.{column}," for column in COLUMNS.keys()]).strip(",")
+
+# TODO: Dynamically create this based on configuration
 TIMELINE_SQL = """
 select
   search_index.rowid,
-  search_index.type,
-  search_index.key,
-  search_index.title,
-  search_index.category,
-  search_index.timestamp,
-  search_index.search_1
+  """ + COLUMNS_SQL + """
 from
   search_index
 {where}
@@ -23,16 +22,12 @@ order by
 limit 40
 """
 
+# TODO: support vector searching
 SEARCH_SQL = """
 select
   search_index_fts.rank,
   search_index.rowid,
-  search_index.type,
-  search_index.key,
-  search_index.title,
-  search_index.category,
-  search_index.timestamp,
-  search_index.search_1
+  """ + COLUMNS_SQL + """
 from
   search_index join search_index_fts on search_index.rowid = search_index_fts.rowid
 {where}
@@ -41,7 +36,11 @@ order by
   {order_by}
 limit 100
 """
-FILTER_COLS = ("type", "category", "is_public")
+
+# TODO: support this by config
+FILTER_COLS = ("type", "program", "payer", "award_type", "recipient", "is_aggregated", "province", "country")
+
+# TODO: Add option for most relevant, highest cost
 SORT_ORDERS = {
     "oldest": "search_index.timestamp",
     "newest": "search_index.timestamp desc",
@@ -140,7 +139,7 @@ async def search(datasette, database_name, request):
     )
     try:
         results = await database.execute(sql_to_execute, params)
-    except sqlite3.OperationalError as e:
+    except sqlite3.OperationalError:
         params["query"] = escape_fts(params["query"])
         results = await database.execute(sql_to_execute, params)
     return [dict(r) for r in results.rows]
@@ -191,15 +190,13 @@ async def process_results(datasette, results, rules, q, template_debug=False):
 
 
 async def get_count_and_facets(datasette, database_name, request):
-    from datasette.utils.asgi import Request, Response
-    from datasette.utils import sqlite3, escape_fts
-
     q = (request.args.get("q") or "").strip()
     timestamp__date = request.args.get("timestamp__date") or ""
 
     async def execute_search(searchmode_raw):
+        # TODO: USE CONFIG FILE
         args = {
-            "_facet": ["type", "category", "is_public"],
+            "_facet": list(FILTER_COLS),
             "_facet_date": ["timestamp"],
             "_size": 0,
         }
@@ -231,7 +228,7 @@ async def get_count_and_facets(datasette, database_name, request):
 
     try:
         count, facets = await execute_search(True)
-    except InnerResponseError as e:
+    except InnerResponseError:
         count, facets = await execute_search(False)
 
     facets = facets.values()

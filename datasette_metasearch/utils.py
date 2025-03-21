@@ -6,30 +6,27 @@ import yaml
 COLUMNS = {
     "type": str,
     "key": str,
-    "title": str,
+    "program": str,
     "timestamp": str,
-    "category": int,
-    "is_public": int,
+    "payer": str,
+    "is_aggregated": int,
     "search_1": str,
-    "search_2": str,
-    "search_3": str,
+    "city": str,
+    "province": str,
+    "country": str,
+    "recipient": str,
+    "recipient_type": str,
+    "description": str,
+    "award_type": str
 }
 # TODO: Make this dynamic based on config.yml
-INDEXES = [("timestamp",), ("category",), ("is_public",)]
+INDEXES = [("program",), ("timestamp",), ("is_aggregated",), ("city", "province",)]
 # TODO: Don't force categorization like this but support other kinds of FKs like geography
-FOREIGN_KEYS = [("category", "categories", "id")]
-DEFAULTS = {"is_public": 0}
+# FOREIGN_KEYS = [("category", "categories", "id")]
+DEFAULTS = {"is_aggregated": 0}
 NOT_NULL = {
-    "is_public",
+    "is_aggregated",
 }
-
-# TODO: Don't force create catgeories
-CATEGORIES = [
-    {"id": 1, "name": "created"},
-    {"id": 2, "name": "saved"},
-    {"id": 3, "name": "received"},
-]
-
 
 def run_indexer(db_path, rules, tokenize="porter", databases=None):
     db = sqlite_utils.Database(db_path)
@@ -73,7 +70,6 @@ def derive_columns(db, sql):
 
 
 def ensure_table_and_indexes(db, tokenize):
-    db["categories"].insert_all(CATEGORIES, pk="id", replace=True)
     table = db["search_index"]
     if not table.exists():
         table.create(
@@ -89,14 +85,18 @@ def ensure_table_and_indexes(db, tokenize):
             if key not in existing_columns:
                 table.add_column(key, type_, not_null_default=DEFAULTS.get(key))
     if not db["search_index_fts"].exists():
-        table.enable_fts(["title", "search_1"], create_triggers=True, tokenize=tokenize)
+        # TODO: Make this dynamic based on config.
+        table.enable_fts(["search_1"], create_triggers=True, tokenize=tokenize)
     for index in INDEXES:
         table.create_index(index, if_not_exists=True)
-    for fk in FOREIGN_KEYS:
-        try:
-            table.add_foreign_key(*fk)
-        except sqlite_utils.db.AlterError:
-            pass
+    #     TODO: re-enable foreign keys based on config. It would be really nice to be able to extract foreign keys
+    #      based on the fields in the database. i.e do two passes, first to generate all the fk columns to normalize the
+    #      database, then the other to load the data into the search_index table
+    # for fk in FOREIGN_KEYS:
+    #     try:
+    #         table.add_foreign_key(*fk)
+    #     except sqlite_utils.db.AlterError:
+    #         pass
 
 
 class BadMetadataError(Exception):
