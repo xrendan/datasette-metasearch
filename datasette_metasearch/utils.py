@@ -8,6 +8,7 @@ COLUMNS = {
     "key": str,
     "program": str,
     "timestamp": str,
+    "amount": float,
     "payer": str,
     "is_aggregated": int,
     "search_1": str,
@@ -20,7 +21,8 @@ COLUMNS = {
     "award_type": str
 }
 # TODO: Make this dynamic based on config.yml
-INDEXES = [("program",), ("timestamp",), ("is_aggregated",), ("city", "province",)]
+FILTER_COLS = ("type", "program", "payer", "award_type", "recipient", "is_aggregated", "province", "country")
+
 # TODO: Don't force categorization like this but support other kinds of FKs like geography
 # FOREIGN_KEYS = [("category", "categories", "id")]
 DEFAULTS = {"is_aggregated": 0}
@@ -87,8 +89,9 @@ def ensure_table_and_indexes(db, tokenize):
     if not db["search_index_fts"].exists():
         # TODO: Make this dynamic based on config.
         table.enable_fts(["search_1"], create_triggers=True, tokenize=tokenize)
-    for index in INDEXES:
-        table.create_index(index, if_not_exists=True)
+    # Add indices on each faceted table to ensure
+    for column in FILTER_COLS:
+        table.create_index((column,), if_not_exists=True)
     #     TODO: re-enable foreign keys based on config. It would be really nice to be able to extract foreign keys
     #      based on the fields in the database. i.e do two passes, first to generate all the fk columns to normalize the
     #      database, then the other to load the data into the search_index table

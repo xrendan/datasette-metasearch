@@ -1,5 +1,5 @@
 from datasette import hookimpl
-from datasette_metasearch.utils import parse_metadata, COLUMNS
+from datasette_metasearch.utils import parse_metadata, COLUMNS, FILTER_COLS
 import html
 import urllib
 from jinja2 import Template
@@ -37,11 +37,9 @@ order by
 limit 100
 """
 
-# TODO: support this by config
-FILTER_COLS = ("type", "program", "payer", "award_type", "recipient", "is_aggregated", "province", "country")
-
 # TODO: Add option for most relevant, highest cost
 SORT_ORDERS = {
+    "most_expensive": "search_index.award_amount desc",
     "oldest": "search_index.timestamp",
     "newest": "search_index.timestamp desc",
 }
