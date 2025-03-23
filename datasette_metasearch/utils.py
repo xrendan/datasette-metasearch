@@ -10,7 +10,7 @@ COLUMNS = {
     "timestamp": str,
     "amount": float,
     "payer": str,
-    "is_aggregated": int,
+    "is_aggregated": bool,
     "search_1": str,
     "city": str,
     "province": str,
@@ -18,7 +18,8 @@ COLUMNS = {
     "recipient": str,
     "recipient_type": str,
     "description": str,
-    "award_type": str
+    "award_type": str,
+    "source_url": str,
 }
 # TODO: Make this dynamic based on config.yml
 FILTER_COLS = ("type", "program", "payer", "award_type", "recipient", "is_aggregated", "province", "country")
