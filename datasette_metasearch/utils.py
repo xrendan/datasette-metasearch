@@ -26,7 +26,7 @@ FILTER_COLS = ("type", "program", "payer", "award_type", "recipient", "is_aggreg
 
 # TODO: Don't force categorization like this but support other kinds of FKs like geography
 # FOREIGN_KEYS = [("category", "categories", "id")]
-DEFAULTS = {"is_aggregated": 0}
+DEFAULTS = {"is_aggregated": False}
 NOT_NULL = {
     "is_aggregated",
 }
