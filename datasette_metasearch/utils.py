@@ -32,8 +32,16 @@ NOT_NULL = {
     "is_aggregated",
 }
 
+def reverse(s):
+    return "".join(reversed(list(s)))
+
+
 def run_indexer(db_path, rules, tokenize="porter", databases=None):
     db = sqlite_utils.Database(db_path)
+
+
+    db.register_function(reverse)
+
     ensure_table_and_indexes(db, tokenize)
     db.conn.close()
 
@@ -42,6 +50,7 @@ def run_indexer(db_path, rules, tokenize="porter", databases=None):
         if databases and db_name not in databases:
             continue
         other_db = sqlite_utils.Database(db_name)
+        other_db.register_function(reverse)
         other_db.conn.execute("ATTACH DATABASE '{}' AS index1".format(db_path))
         for type_, info in type_rules.items():
             # Execute SQL with limit 0 to figure out the columns
