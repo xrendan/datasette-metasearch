@@ -8,6 +8,7 @@ COLUMNS = {
     "key": str,
     "program": str,
     "timestamp": str,
+    "fiscal_year": str,
     "amount": float,
     "payer": str,
     "is_aggregated": bool,
